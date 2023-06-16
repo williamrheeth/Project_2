@@ -23,6 +23,7 @@ class My_plane{
         int shot_frame_my_plane=1;
         int create_frame_my_plane; //initialize when it creates
         int check_frame_my_plane=0;
+        bool power_up=false;
         vector<Bullet> bullet;
 };
 #endif

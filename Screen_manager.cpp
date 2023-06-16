@@ -56,7 +56,30 @@ void Screen_manager::print_share(){
                     board[iter->y][iter->x]=' ';
                 }
                 iter->y -= shot_frame;
-                board[iter->y][iter->x]='\'';
+                
+                if(this->my_plane.power_up == true) {
+                    if(iter->level==1) {
+                        board[iter->y][iter->x-1]='\'';
+                        board[iter->y][iter->x]='\'';
+                        board[iter->y][iter->x+1]='\'';
+                    } else if(iter->level==2) {
+                        board[iter->y][iter->x-1]='^';
+                        board[iter->y][iter->x]='^';
+                        board[iter->y][iter->x+1]='^';
+                    } else if(iter->level>=3) {
+                        board[iter->y][iter->x-1]='!';
+                        board[iter->y][iter->x]='!';
+                        board[iter->y][iter->x+1]='!';
+                    }
+                } else {
+                    if(iter->level==1) {
+                        board[iter->y][iter->x]='\'';
+                    } else if(iter->level==2) {
+                        board[iter->y][iter->x]='^';
+                    } else if(iter->level>=3) {
+                        board[iter->y][iter->x]='!';
+                    }
+                }
                 iter++;
             }
         }
@@ -64,6 +87,8 @@ void Screen_manager::print_share(){
         check_frame++;
     }
     //Bullet part ends
+
+
 }
 
 //print when key didn't pressed
