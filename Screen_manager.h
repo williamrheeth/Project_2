@@ -13,6 +13,7 @@
 #include <vector>
 #include "My_plane.h"
 #include "Enemy_plane.h"
+#include "Buff.h"
 
 using namespace std;
 
@@ -36,5 +37,6 @@ class Screen_manager{
         My_plane my_plane = My_plane(height-2, 1, 0);
 
         vector<Enemy_plane*> enemy_vector;
+        vector<Buff*> buff_vector;
 };
 #endif

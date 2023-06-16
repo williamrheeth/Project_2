@@ -27,7 +27,7 @@ class Enemy_Bullet: public Bullet{
     public:
         Enemy_Bullet(int y_value, int x_value, int frame_value, int level) \
         : Bullet(y_value, x_value, frame_value, level) {};
-        int damage=1;
+        //int damage=1;
         int y, x;
         int create_frame_bullet; //initialize when it creates
         int check_frame_bullet=0;

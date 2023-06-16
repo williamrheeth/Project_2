@@ -93,6 +93,7 @@ void Screen_manager::print_share(){
         }
 
         // enemy bullet
+        if(enemy_vector.empty()) continue;
         for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); ) {
             for(auto bulletiter = (*iter)->enemy_bullet.begin(); bulletiter < (*iter)->enemy_bullet.end(); ) {
                 if((*iter)->type == 's') {
@@ -169,11 +170,22 @@ void Screen_manager::print_share(){
                         if((*iter)->type == 'a') continue;
                         if((*iter)->y >= enemy->y-3 || (*iter)->y <= enemy->y+3) {
                             if((*iter)->x >= enemy->x-3 || (*iter)->x <= enemy->x+3)
-                                (*iter)->buff = true;
+                                (*iter)->buff = true; // Buff enemies within the 7x7 unit zone
                         }
                     }
                     this->frame_event[i] = 0;
                     break;
+                case 'P':
+                    Buff* power_up = new Power_up(y_event[i], x_event[i], curr_frame);
+                    this->buff_vector.push_back(power_up);
+                    this->frame_event[i] = 0;
+                    break;
+                case 'L':
+                    Buff* level_up = new Level_up(y_event[i], x_event[i], curr_frame);
+                    this->buff_vector.push_back(level_up);
+                    this->frame_event[i] = 0;
+                    break;
+
             }
         }
     }
@@ -185,7 +197,7 @@ void Screen_manager::print_share(){
             buff_speed = (*iter)->buff_speed_enemy_plane;
             create_frame = (*iter)->create_frame_enemy_plane;
             check_frame = (*iter)->check_frame_enemy_plane;
-            
+        
         if(cell_speed == 0) { // stationary enemy
             if((*iter)->y != 0 && curr_frame != 1) {
                 board[(*iter)->y][(*iter)->x]=' ';
@@ -232,7 +244,7 @@ void Screen_manager::print_share(){
                 }
 
                 int buff_val = 1;
-                if((*iter)->buff == true) buff_val = 2;
+                if((*iter)->buff == true) buff_val = 2; // If the enemy is buffed, bullet level = 2
 
                 // enemy bullet part
                 if((*iter)->type == 's') {
@@ -250,6 +262,44 @@ void Screen_manager::print_share(){
 
             (*iter)->check_frame_enemy_plane += 1;
             check_frame++;
+        }
+    }
+
+    // Buff part
+    for(auto iter = this->buff_vector.begin(); iter < this->buff_vector.end(); ) {
+        board[(*iter)->y][(*iter)->x]=' ';
+        board[(*iter)->y][(*iter)->x]=(char)(*iter)->type;
+    }
+
+
+    //-----------------------------------
+    // Interaction between objects
+    //-----------------------------------
+
+    // Enemy plane vs My plane
+    for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); iter++) {
+        if((*iter)->y == this->my_plane.y && (*iter)->x == this->my_plane.x) {
+            this->my_plane.hp -= 1;
+        }
+    }
+
+    // Enemy bullet vs My plane
+    for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); iter++) {
+        for(auto iter2 = (*iter)->enemy_bullet.begin(); iter2 < (*iter)->enemy_bullet.end(); iter2++) {
+            if((*iter2).y == this->my_plane.y && (*iter2).x == this->my_plane.x) {
+                this->my_plane.hp -= (*iter2).level;
+                (*iter)->enemy_bullet.erase(iter2);
+            }
+        }
+    }
+
+    // My bullet vs Enemy
+    for(auto iter = this->my_plane.bullet.begin(); iter < this->my_plane.bullet.end(); iter++) {
+        for(auto iter2 = this->enemy_vector.begin(); iter2 < this->enemy_vector.end(); iter2++) {
+            if((*iter).y == (*iter2)->y && (*iter).x == (*iter2)->x) {
+                (*iter2)->hp -= (*iter).level;
+                this->my_plane.bullet.erase(iter);
+            }
         }
     }
 }
