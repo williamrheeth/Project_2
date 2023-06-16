@@ -83,6 +83,25 @@ int main(int argc, char *argv[])
         if(manager.curr_frame-prev_frame>0){
             manager.render();
         }
+
+        if(manager.my_plane.hp<=0){ //If hp=0, game over
+            break;
+        }
+
+        for(int i = 0; i < manager.enemy_vector.size(); i++){
+            if(manager.enemy_vector[i]->hp<=0){
+                manager.enemy_vector.erase(manager.enemy_vector.begin()+i);
+            }
+        }
+
+        for(int i = 0; i < sizeof(manager.frame_event); i++) {
+            if(manager.frame_event[i] != 0) {
+                continue;
+            } else if(manager.enemy_vector.empty()) {
+                break;
+            }
+        }
+        
     }
     system("cls");
     std::cout<<"Start game~!"<<endl;

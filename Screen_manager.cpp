@@ -302,6 +302,21 @@ void Screen_manager::print_share(){
             }
         }
     }
+
+    // My plane getting buff
+    for(auto iter = this->buff_vector.begin(); iter < this->buff_vector.end(); iter++) {
+        if((*iter)->y == this->my_plane.y && (*iter)->x == this->my_plane.x) {
+            switch ((*iter)->type) {
+                case 'P':
+                    this->my_plane.power_up == true;
+                    break;
+                case 'L':
+                    this->my_plane.level += 1;
+                    break;
+            }
+            this->buff_vector.erase(iter);
+        }
+    }
 }
 
 //print when key didn't pressed
