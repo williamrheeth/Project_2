@@ -43,7 +43,7 @@ void Screen_manager::print_share(){
     create_frame = this->my_plane.create_frame_my_plane;
     check_frame = this->my_plane.check_frame_my_plane;
     while ((curr_frame-create_frame)/shot_frame - check_frame > 0){ //bullet create
-        Bullet bullet = Bullet(this->my_plane.y-1+shot_frame, this->my_plane.x, check_frame);
+        Bullet bullet = Bullet(this->my_plane.y-1+shot_frame, this->my_plane.x, check_frame, this->my_plane.level);
         this->my_plane.bullet.push_back(bullet);
 
         for(auto iter=this->my_plane.bullet.begin(); iter<this->my_plane.bullet.end(); ){
@@ -57,6 +57,14 @@ void Screen_manager::print_share(){
                 }
                 iter->y -= shot_frame;
                 
+                if(iter->level==2){
+                    iter->damage = 2;
+                }
+
+                if(iter->level>=3){
+                    iter->damage = 3;
+                }
+
                 if(this->my_plane.power_up == true) {
                     if(iter->level==1) {
                         board[iter->y][iter->x-1]='\'';
@@ -83,6 +91,47 @@ void Screen_manager::print_share(){
                 iter++;
             }
         }
+
+        // enemy bullet
+        for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); ) {
+            for(auto bulletiter = (*iter)->enemy_bullet.begin(); bulletiter < (*iter)->enemy_bullet.end(); ) {
+                if((*iter)->type == 's') {
+                    if(bulletiter->y >= height-1) {
+                        board[bulletiter->y][bulletiter->x]=' ';
+                        (*iter)->enemy_bullet.erase(bulletiter);
+                    } else {
+                        if(bulletiter->y != 0 && curr_frame != 1) {
+                            board[bulletiter->y][bulletiter->x]=' ';
+                        }
+                        bulletiter->y += 1;
+                        board[bulletiter->y][bulletiter->x]='*';
+                    
+                        bulletiter++;
+                    }
+                }
+                if((*iter)->type == 'd') {
+                    if(bulletiter->y >= height-1) {
+                        board[bulletiter->y][bulletiter->x]=' ';
+                        (*iter)->enemy_bullet.erase(bulletiter);
+                    } else {
+                        if(bulletiter->y != 0 && curr_frame != 1) {
+                            board[bulletiter->y][bulletiter->x]=' ';
+                        }
+                        bulletiter->y += 1;
+                        if((*iter)->x <= 14) { //diagonally towards nearest wall
+                            bulletiter->x -= 1;
+                        } else if((*iter)->x >= 14) {
+                            bulletiter->x += 1;
+                        }
+
+                        board[bulletiter->y][bulletiter->x]='*';
+                    
+                        bulletiter++;
+                    }
+                }
+            }
+            iter++;
+        }
         this->my_plane.check_frame_my_plane+=1;
         check_frame++;
     }
@@ -96,18 +145,22 @@ void Screen_manager::print_share(){
                 case 'n':
                     Enemy_plane_1n* enemy = new Enemy_plane_1n(y_event[i], x_event[i], curr_frame);
                     this->enemy_vector.push_back(enemy);
+                    this->frame_event[i] = 0;
                     break;
                 case 'r':
                     Enemy_plane_2r* enemy = new Enemy_plane_2r(y_event[i], x_event[i], curr_frame);
                     this->enemy_vector.push_back(enemy);
+                    this->frame_event[i] = 0;
                     break;
                 case 's':
                     Enemy_plane_3s* enemy = new Enemy_plane_3s(y_event[i], x_event[i], curr_frame);
                     this->enemy_vector.push_back(enemy);
+                    this->frame_event[i] = 0;
                     break;
                 case 'd':
                     Enemy_plane_4d* enemy = new Enemy_plane_4d(y_event[i], x_event[i], curr_frame);
                     this->enemy_vector.push_back(enemy);
+                    this->frame_event[i] = 0;
                     break;
                 case 'a':
                     Enemy_plane_5a* enemy = new Enemy_plane_5a(y_event[i], x_event[i], curr_frame);
@@ -119,6 +172,7 @@ void Screen_manager::print_share(){
                                 (*iter)->buff = true;
                         }
                     }
+                    this->frame_event[i] = 0;
                     break;
             }
         }
@@ -126,23 +180,76 @@ void Screen_manager::print_share(){
 
     //Enemy part
     for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); ) {
-        if((*iter)->y >= height-1) {
-            board[(*iter)->y][(*iter)->x]=' ';
-            delete *iter;
-            this->enemy_vector.erase(iter);
-        } else {
+        int cell_speed, buff_speed, create_frame, check_frame;
+            cell_speed = (*iter)->cell_speed_enemy_plane;
+            buff_speed = (*iter)->buff_speed_enemy_plane;
+            create_frame = (*iter)->create_frame_enemy_plane;
+            check_frame = (*iter)->check_frame_enemy_plane;
+            
+        if(cell_speed == 0) { // stationary enemy
             if((*iter)->y != 0 && curr_frame != 1) {
                 board[(*iter)->y][(*iter)->x]=' ';
             }
-            (*iter)->y += (*iter)->cell_speed_enemy_plane;
-
             if((*iter)->buff == true) {
                 board[(*iter)->y][(*iter)->x]=(char)(*iter)->type-32;
             } else {
                 board[(*iter)->y][(*iter)->x]=(char)(*iter)->type;
             }
 
+            if((*iter)->type == 'a') { // buffing enemy
+                while((curr_frame-create_frame)/buff_speed - check_frame > 0) {
+                    for(auto iter2 = this->enemy_vector.begin(); iter2 < this->enemy_vector.end(); iter2++) {
+                        if((*iter2)->type == 'a') continue;
+                        if((*iter2)->y >= (*iter)->y-3 || (*iter2)->y <= (*iter)->y+3) {
+                            if((*iter2)->x >= (*iter)->x-3 || (*iter2)->x <= (*iter)->x+3)
+                                (*iter2)->buff = true;
+                        }
+                    }
+                }
+            }
+            
             iter++;
+            (*iter)->check_frame_enemy_plane+=1;
+            check_frame++;
+            continue;
+        }
+
+        while ((curr_frame-create_frame)/cell_speed - check_frame > 0) { // moving enemy
+            if((*iter)->y >= height-1) {
+                board[(*iter)->y][(*iter)->x]=' ';
+                delete *iter;
+                this->enemy_vector.erase(iter);
+            } else {
+                if((*iter)->y != 0 && curr_frame != 1) {
+                    board[(*iter)->y][(*iter)->x]=' ';
+                }
+                (*iter)->y += cell_speed;
+
+                if((*iter)->buff == true) {
+                    board[(*iter)->y][(*iter)->x]=(char)(*iter)->type-32;
+                } else {
+                    board[(*iter)->y][(*iter)->x]=(char)(*iter)->type;
+                }
+
+                int buff_val = 1;
+                if((*iter)->buff == true) buff_val = 2;
+
+                // enemy bullet part
+                if((*iter)->type == 's') {
+                    Enemy_Bullet bullet = Enemy_Bullet((*iter)->y+1, (*iter)->x, check_frame, buff_val);
+                    (*iter)->enemy_bullet.push_back(bullet);
+                }
+
+                if((*iter)->type == 'd') {
+                    Enemy_Bullet bullet = Enemy_Bullet((*iter)->y+1, (*iter)->x, check_frame, buff_val);
+                    (*iter)->enemy_bullet.push_back(bullet);
+                }
+
+                iter++;
+            }
+
+            (*iter)->check_frame_enemy_plane += 1;
+            check_frame++;
         }
     }
 }

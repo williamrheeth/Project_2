@@ -21,7 +21,7 @@ class Enemy_plane{
         : y(y_value), x(x_value), create_frame_enemy_plane(frame_value), score(score), hp(hp) {};
         int y, x;
         int cell_speed_enemy_plane=0;
-        int buff_speed_enemy_plane;
+        int buff_speed_enemy_plane=0;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane;
 
@@ -29,7 +29,7 @@ class Enemy_plane{
         int score;
         int hp;
         bool buff;
-        vector<Bullet> bullet;
+        vector<Bullet> enemy_bullet;
 };
 
 class Enemy_plane_1n: public Enemy_plane{
