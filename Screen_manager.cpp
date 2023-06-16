@@ -88,7 +88,33 @@ void Screen_manager::print_share(){
     }
     //Bullet part ends
 
-
+    //Calling Event
+    for(int i = 0; i < sizeof(this->frame_event); i++) {
+        if(frame_event[i] == curr_frame) {
+            switch (type_event[i]) {
+                case 'n':
+                    Enemy_plane_1n enemy = Enemy_plane_1n(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(&enemy);
+                    break;
+                case 'r':
+                    Enemy_plane_2r enemy = Enemy_plane_2r(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(&enemy);
+                    break;
+                case 's':
+                    Enemy_plane_3s enemy = Enemy_plane_3s(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(&enemy);
+                    break;
+                case 'd':
+                    Enemy_plane_4d enemy = Enemy_plane_4d(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(&enemy);
+                    break;
+                case 'a':
+                    Enemy_plane_5a enemy = Enemy_plane_5a(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(&enemy);
+                    break;
+            }
+        }
+    }
 }
 
 //print when key didn't pressed

@@ -20,9 +20,13 @@ class Enemy_plane{
         Enemy_plane(int y_value, int x_value, int frame_value, int score, int hp) \
         : y(y_value), x(x_value), create_frame_enemy_plane(frame_value), score(score), hp(hp) {};
         int y, x;
+        int cell_speed_enemy_plane;
+        int buff_speed_enemy_plane;
         int create_frame_enemy_plane; //initialize when it creates
+        int check_frame_enemy_plane;
         int score;
         int hp;
+        bool power_up;
 };
 
 class Enemy_plane_1n: public Enemy_plane{
@@ -41,7 +45,7 @@ class Enemy_plane_2r: public Enemy_plane_1n{
     public:
         Enemy_plane_2r(int y_value, int x_value, int frame_value) \
         : Enemy_plane_1n(y_value, x_value, frame_value, 2, 5) {};
-        int move_frame_enemy_plane=3;
+        int cell_speed_enemy_plane=3;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane=0;
         bool power_up=false;
