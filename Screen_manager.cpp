@@ -139,32 +139,39 @@ void Screen_manager::print_share(){
     //Bullet part ends
 
     //Calling Event
-    for(int i = 0; i < sizeof(this->frame_event); i++) {
+    for(int i = 0; i < sizeof(frame_event); i++) {
         if(frame_event[i] == curr_frame) {
-            switch (type_event[i]) {
-                //Stores the address of enemy plane in enemy_vector
-                case 'n':
-                    Enemy_plane_1n* enemy = new Enemy_plane_1n(y_event[i], x_event[i], curr_frame);
+            char type = type_event[i];
+            int y = y_event[i];
+            int x = x_event[i];
+
+            switch (type) {
+                case 'n': {
+                    Enemy_plane_1n* enemy = new Enemy_plane_1n(y, x, curr_frame);
                     this->enemy_vector.push_back(enemy);
-                    this->frame_event[i] = 0;
+                    frame_event[i] = 0;
                     break;
-                case 'r':
-                    Enemy_plane_2r* enemy = new Enemy_plane_2r(y_event[i], x_event[i], curr_frame);
+                }
+                case 'r': {
+                    Enemy_plane_2r* enemy = new Enemy_plane_2r(y, x, curr_frame);
                     this->enemy_vector.push_back(enemy);
-                    this->frame_event[i] = 0;
+                    frame_event[i] = 0;
                     break;
-                case 's':
-                    Enemy_plane_3s* enemy = new Enemy_plane_3s(y_event[i], x_event[i], curr_frame);
+                }
+                case 's': {
+                    Enemy_plane_3s* enemy = new Enemy_plane_3s(y, x, curr_frame);
                     this->enemy_vector.push_back(enemy);
-                    this->frame_event[i] = 0;
+                    frame_event[i] = 0;
                     break;
-                case 'd':
-                    Enemy_plane_4d* enemy = new Enemy_plane_4d(y_event[i], x_event[i], curr_frame);
+                }
+                case 'd': {
+                    Enemy_plane_4d* enemy = new Enemy_plane_4d(y, x, curr_frame);
                     this->enemy_vector.push_back(enemy);
-                    this->frame_event[i] = 0;
+                    frame_event[i] = 0;
                     break;
-                case 'a':
-                    Enemy_plane_5a* enemy = new Enemy_plane_5a(y_event[i], x_event[i], curr_frame);
+                }
+                case 'a': {
+                    Enemy_plane_5a* enemy = new Enemy_plane_5a(y, x, curr_frame);
                     this->enemy_vector.push_back(enemy);
                     for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); iter++) {
                         if((*iter)->type == 'a') continue;
@@ -173,19 +180,21 @@ void Screen_manager::print_share(){
                                 (*iter)->buff = true; // Buff enemies within the 7x7 unit zone
                         }
                     }
-                    this->frame_event[i] = 0;
+                    frame_event[i] = 0;
                     break;
-                case 'P':
-                    Buff* power_up = new Power_up(y_event[i], x_event[i], curr_frame);
+                }
+                case 'P': {
+                    Buff* power_up = new Power_up(y, x, curr_frame);
                     this->buff_vector.push_back(power_up);
-                    this->frame_event[i] = 0;
+                    frame_event[i] = 0;
                     break;
-                case 'L':
-                    Buff* level_up = new Level_up(y_event[i], x_event[i], curr_frame);
+                }
+                case 'L': {
+                    Buff* level_up = new Level_up(y, x, curr_frame);
                     this->buff_vector.push_back(level_up);
-                    this->frame_event[i] = 0;
+                    frame_event[i] = 0;
                     break;
-
+                }
             }
         }
     }
