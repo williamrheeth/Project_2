@@ -25,5 +25,7 @@ class My_plane{
         int check_frame_my_plane=0;
         bool power_up=false;
         vector<Bullet> bullet;
+
+        int hp=5;
 };
 #endif
