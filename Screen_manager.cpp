@@ -92,6 +92,7 @@ void Screen_manager::print_share(){
     for(int i = 0; i < sizeof(this->frame_event); i++) {
         if(frame_event[i] == curr_frame) {
             switch (type_event[i]) {
+                //Stores the address of enemy plane in enemy_vector
                 case 'n':
                     Enemy_plane_1n enemy = Enemy_plane_1n(y_event[i], x_event[i], curr_frame);
                     this->enemy_vector.push_back(&enemy);
@@ -111,8 +112,36 @@ void Screen_manager::print_share(){
                 case 'a':
                     Enemy_plane_5a enemy = Enemy_plane_5a(y_event[i], x_event[i], curr_frame);
                     this->enemy_vector.push_back(&enemy);
+                    for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); iter++) {
+                        if((*iter)->type == 'a') continue;
+                        if((*iter)->y >= enemy.y-3 || (*iter)->y <= enemy.y+3) {
+                            if((*iter)->x >= enemy.x-3 || (*iter)->x <= enemy.x+3)
+                                (*iter)->buff = true;
+                        }
+                    }
                     break;
             }
+        }
+    }
+
+    //Enemy part
+    for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); ) {
+        if((*iter)->y >= height-1) {
+            board[(*iter)->y][(*iter)->x]=' ';
+            this->enemy_vector.erase(iter);
+        } else {
+            if((*iter)->y != 0 && curr_frame != 1) {
+                board[(*iter)->y][(*iter)->x]=' ';
+            }
+            (*iter)->y += (*iter)->cell_speed_enemy_plane;
+
+            if((*iter)->buff == true) {
+                board[(*iter)->y][(*iter)->x]=(char)(*iter)->type-32;
+            } else {
+                board[(*iter)->y][(*iter)->x]=(char)(*iter)->type;
+            }
+
+            iter++;
         }
     }
 }

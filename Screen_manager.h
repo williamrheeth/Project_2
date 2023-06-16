@@ -34,5 +34,7 @@ class Screen_manager{
         void render();
         char board[30][60]={'a'};
         My_plane my_plane = My_plane(height-2, 1, 0);
+
+        vector<Enemy_plane*> enemy_vector;
 };
 #endif

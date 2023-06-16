@@ -20,13 +20,16 @@ class Enemy_plane{
         Enemy_plane(int y_value, int x_value, int frame_value, int score, int hp) \
         : y(y_value), x(x_value), create_frame_enemy_plane(frame_value), score(score), hp(hp) {};
         int y, x;
-        int cell_speed_enemy_plane;
+        int cell_speed_enemy_plane=0;
         int buff_speed_enemy_plane;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane;
+
+        char type;
         int score;
         int hp;
-        bool power_up;
+        bool buff;
+        vector<Bullet> bullet;
 };
 
 class Enemy_plane_1n: public Enemy_plane{
@@ -38,7 +41,9 @@ class Enemy_plane_1n: public Enemy_plane{
         int y, x;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane=0;
-        bool power_up=false;
+
+        char type='n';
+        bool buff=false;
 };
 
 class Enemy_plane_2r: public Enemy_plane_1n{
@@ -48,7 +53,9 @@ class Enemy_plane_2r: public Enemy_plane_1n{
         int cell_speed_enemy_plane=3;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane=0;
-        bool power_up=false;
+
+        char type='r';
+        bool buff=false;
 };
 
 class Enemy_plane_3s: public Enemy_plane_1n{
@@ -61,7 +68,9 @@ class Enemy_plane_3s: public Enemy_plane_1n{
         int cell_speed_enemy_plane=9;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane=0;
-        bool power_up=false;
+
+        char type='s';
+        bool buff=false;
 };
 
 class Enemy_plane_4d: public Enemy_plane_3s{
@@ -71,7 +80,9 @@ class Enemy_plane_4d: public Enemy_plane_3s{
         int cell_speed_enemy_plane=3;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane=0;
-        bool power_up=false;
+
+        char type='d';
+        bool buff=false;
 };
 
 class Enemy_plane_5a: public Enemy_plane_3s{
@@ -81,7 +92,9 @@ class Enemy_plane_5a: public Enemy_plane_3s{
         int buff_speed_enemy_plane=6;
         int create_frame_enemy_plane; //initialize when it creates
         int check_frame_enemy_plane=0;
-        bool power_up=false;
+
+        char type='a';
+        bool buff=false;
 };
 
 #endif
