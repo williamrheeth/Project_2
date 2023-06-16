@@ -94,28 +94,28 @@ void Screen_manager::print_share(){
             switch (type_event[i]) {
                 //Stores the address of enemy plane in enemy_vector
                 case 'n':
-                    Enemy_plane_1n enemy = Enemy_plane_1n(y_event[i], x_event[i], curr_frame);
-                    this->enemy_vector.push_back(&enemy);
+                    Enemy_plane_1n* enemy = new Enemy_plane_1n(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(enemy);
                     break;
                 case 'r':
-                    Enemy_plane_2r enemy = Enemy_plane_2r(y_event[i], x_event[i], curr_frame);
-                    this->enemy_vector.push_back(&enemy);
+                    Enemy_plane_2r* enemy = new Enemy_plane_2r(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(enemy);
                     break;
                 case 's':
-                    Enemy_plane_3s enemy = Enemy_plane_3s(y_event[i], x_event[i], curr_frame);
-                    this->enemy_vector.push_back(&enemy);
+                    Enemy_plane_3s* enemy = new Enemy_plane_3s(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(enemy);
                     break;
                 case 'd':
-                    Enemy_plane_4d enemy = Enemy_plane_4d(y_event[i], x_event[i], curr_frame);
-                    this->enemy_vector.push_back(&enemy);
+                    Enemy_plane_4d* enemy = new Enemy_plane_4d(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(enemy);
                     break;
                 case 'a':
-                    Enemy_plane_5a enemy = Enemy_plane_5a(y_event[i], x_event[i], curr_frame);
-                    this->enemy_vector.push_back(&enemy);
+                    Enemy_plane_5a* enemy = new Enemy_plane_5a(y_event[i], x_event[i], curr_frame);
+                    this->enemy_vector.push_back(enemy);
                     for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); iter++) {
                         if((*iter)->type == 'a') continue;
-                        if((*iter)->y >= enemy.y-3 || (*iter)->y <= enemy.y+3) {
-                            if((*iter)->x >= enemy.x-3 || (*iter)->x <= enemy.x+3)
+                        if((*iter)->y >= enemy->y-3 || (*iter)->y <= enemy->y+3) {
+                            if((*iter)->x >= enemy->x-3 || (*iter)->x <= enemy->x+3)
                                 (*iter)->buff = true;
                         }
                     }
@@ -128,6 +128,7 @@ void Screen_manager::print_share(){
     for(auto iter = this->enemy_vector.begin(); iter < this->enemy_vector.end(); ) {
         if((*iter)->y >= height-1) {
             board[(*iter)->y][(*iter)->x]=' ';
+            delete *iter;
             this->enemy_vector.erase(iter);
         } else {
             if((*iter)->y != 0 && curr_frame != 1) {
