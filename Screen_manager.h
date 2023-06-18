@@ -23,6 +23,7 @@ class Screen_manager{
         int frame_length=100000; //each frame's length == 0.1sec(10,000 microseconds)
         int curr_frame=0; //1frame=0.1sec
 
+        int num_event;
         int y, x;
         int width=60;
         int height=30;
@@ -36,7 +37,7 @@ class Screen_manager{
         char board[30][60]={'a'};
         My_plane my_plane = My_plane(height-2, 1, 0);
 
-        vector<Enemy_plane*> enemy_vector;
-        vector<Buff*> buff_vector;
+        vector<Enemy_plane*> enemy_vector = {};
+        vector<Buff*> buff_vector = {};
 };
 #endif

@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
     int num_event, frame_event, y_event, x_event;
     char type_event;
     input >> num_event;
+    manager.num_event = num_event;
     for(int i=0; i<num_event; i++){
         input >> frame_event >> type_event >> y_event >> x_event;
         manager.frame_event[i] = frame_event;
@@ -58,21 +59,27 @@ int main(int argc, char *argv[])
     while(ch !='x')
     {
         auto start = std::chrono::system_clock::now();
-        if(_kbhit()) {
+        
+        if (_kbhit()) {
             ch = getKeyDown();
             manager.print(ch);
-            if(ch=='x') break;
-        }
-        else{
+            if (ch == 'x') {
+                break;
+            }
+        } else {
             manager.print();
         }
         auto end = std::chrono::system_clock::now();
-        auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(end-start);
+        auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
         int prev_frame = operation_time / frame_length;
-        //operation_time += (end-start);
         operation_time += microsec.count();
         manager.curr_frame = operation_time / frame_length;
-        
+
+        if (manager.curr_frame - prev_frame > 0) {
+
+            manager.render();
+        }
+
         /*Objects operate every 0.1 seconds.
         Call refresh() every 0.1 seconds(or every 0.1*n seconds if manager.print() takes a long time)
         ex) if operation_time changes to 0.25->0.30, refresh()
@@ -80,27 +87,30 @@ int main(int argc, char *argv[])
         You can modify your manager.print() using multi-threading or not.
         If you use multi-threading, you may print more frequently.
         You can reduce the execution time of manager.print() using multi-threading*/
-        if(manager.curr_frame-prev_frame>0){
-            manager.render();
-        }
 
-        if(manager.my_plane.hp<=0){ //If hp=0, game over
-            break;
-        }
 
-        for(int i = 0; i < manager.enemy_vector.size(); i++){
-            if(manager.enemy_vector[i]->hp<=0){
-                manager.enemy_vector.erase(manager.enemy_vector.begin()+i);
-            }
-        }
+        
 
-        for(int i = 0; i < sizeof(manager.frame_event); i++) {
-            if(manager.frame_event[i] != 0) {
-                continue;
-            } else if(manager.enemy_vector.empty()) {
-                break;
-            }
-        }
+        // if(manager.my_plane.hp<=0){ //If hp=0, game over
+        //     break;
+        // }
+
+        // for(int i = 0; i < manager.enemy_vector.size(); i++){
+        //     if(manager.enemy_vector[i]->hp<=0){
+        //         manager.enemy_vector.erase(manager.enemy_vector.begin()+i);
+        //     }
+        // }
+
+        // if(manager.curr_frame >= 1) {
+        //     for(int i = 0; i < sizeof(manager.frame_event); i++) {
+        //         if(manager.frame_event[i] != -1) {
+        //             continue;
+        //         } else if(manager.enemy_vector.empty()) {
+        //             break;
+        //         }
+        //     }
+        // }
+        
         
     }
     system("cls");

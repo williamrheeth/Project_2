@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -g -Wall 
 CFLAGS=--std=c++14 
 TARGET=final
 
